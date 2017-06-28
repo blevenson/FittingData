@@ -13,10 +13,16 @@ class Waypoint():
 		self.heading = math.tan(math.radians(heading_))
 
 waypoints = []
-waypoints.append(Waypoint(0, 0, 45))
-waypoints.append(Waypoint(1, 5, 30.0))
-waypoints.append(Waypoint(2, 2, 0.0))
-waypoints.append(Waypoint(8, 8, -45))
+# waypoints.append(Waypoint(0, 0, 45))
+# waypoints.append(Waypoint(1, 5, 30.0))
+# waypoints.append(Waypoint(2, 2, 0.0))
+# waypoints.append(Waypoint(8, 8, -45))
+
+waypoints.append(Waypoint(0, 0, 0))
+waypoints.append(Waypoint(5, 0, 0))
+waypoints.append(Waypoint(10, 0, 0))
+# waypoints.append(Waypoint(15, 0, 0))
+waypoints.append(Waypoint(17, 8, 0))
 
 #Length is 1 less than amount of points
 #Stores an array of the constants for each spline
@@ -34,13 +40,13 @@ def df(x, X):
 def plotSpline(section, startingPoint, endingPoint):
 	#plt.plot(x, f(x, X))
 
-	x = np.arange(startingPoint.x, endingPoint.x, 0.01)
+	x = np.arange(startingPoint.x, endingPoint.x + RESOLUTION, RESOLUTION)
 
 	plt.plot(x, f(x, section))
 
 #Plots the spline's heading
 def plotHeading(section, startingPoint, endingPoint):
-	x = np.arange(startingPoint.x, endingPoint.x, 0.01)
+	x = np.arange(startingPoint.x, endingPoint.x + RESOLUTION, RESOLUTION)
 
 	plt.plot(x, df(x, section))
 
