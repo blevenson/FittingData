@@ -21,7 +21,7 @@ waypoints = []
 waypoints.append(Waypoint(0, 0, 0))
 waypoints.append(Waypoint(5, 0, 0))
 waypoints.append(Waypoint(10, 0, 0))
-# waypoints.append(Waypoint(15, 0, 0))
+waypoints.append(Waypoint(15, 0, 0))
 waypoints.append(Waypoint(17, 8, 0))
 
 #Length is 1 less than amount of points
@@ -36,6 +36,12 @@ def df(x, X):
 	#Function to graph the heading
 	return X[1,0] + 2*(X[2,0] * x) + 3*(X[3,0] * x ** 2)
 
+def parallelCurveY(x1, x2, X, d):
+	return f(x1, X) - (d / ((1 + df(x1, X) ** 2) ** (0.5)))
+
+def parallelCurveX(x, d, X):
+	return x + (d * df(x, X)) / ((1 + df(x, X) ** 2) ** 0.5)
+
 #Plots the spline
 def plotSpline(section, startingPoint, endingPoint):
 	#plt.plot(x, f(x, X))
@@ -49,6 +55,13 @@ def plotHeading(section, startingPoint, endingPoint):
 	x = np.arange(startingPoint.x, endingPoint.x + RESOLUTION, RESOLUTION)
 
 	plt.plot(x, df(x, section))
+
+#Plots parallel curve
+def plotParallelCurve(section, startingPoint, endingPoint, d):
+	x1 = np.arange(startingPoint.x, endingPoint.x + RESOLUTION, RESOLUTION)
+	x2 = parallelCurveX(x1, d, section)
+
+	plt.plot(x2, parallelCurveY(x1, x2, section, d))
 
 #Points are waypoints
 def calculateSpline(previousPoint, currentPoint):
@@ -87,6 +100,7 @@ for i in range(1, len(waypoints)):
 #plot splines
 for i in range(0, len(waypoints) - 1):
 	plotSpline(splines[i], waypoints[i], waypoints[i + 1])
+	plotParallelCurve(splines[i], waypoints[i], waypoints[i + 1], 1)
 	# plotHeading(splines[i], waypoints[i], waypoints[i + 1])
 
 
