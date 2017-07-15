@@ -3,6 +3,7 @@ import numpy as np
 import math
 
 RESOLUTION = 0.01
+ROBOT_WIDTH = 1.0;
 
 class Waypoint():
 
@@ -21,8 +22,8 @@ waypoints = []
 waypoints.append(Waypoint(0, 0, 0))
 waypoints.append(Waypoint(5, 0, 0))
 waypoints.append(Waypoint(10, 0, 0))
-waypoints.append(Waypoint(15, 0, 0))
-waypoints.append(Waypoint(17, 8, 0))
+waypoints.append(Waypoint(15, 0, 45))
+waypoints.append(Waypoint(17, 2, 45))
 
 #Length is 1 less than amount of points
 #Stores an array of the constants for each spline
@@ -63,6 +64,16 @@ def plotParallelCurve(section, startingPoint, endingPoint, d):
 
 	plt.plot(x2, parallelCurveY(x1, x2, section, d))
 
+def calcLengthCurve(section, startX, endX):
+	length = 0;
+
+	xValues = np.arange(startX, endX + RESOLUTION, RESOLUTION);
+	yValues = f(xValues, section)
+	for i in range(len(xValues) - 1):
+		length += ((xValues[i + 1] - xValues[i]) ** 2 + (yValues[i + 1] - yValues[i]) ** 2) ** 0.5
+
+	return length
+
 #Points are waypoints
 def calculateSpline(previousPoint, currentPoint):
 	#System equations:
@@ -97,11 +108,20 @@ plt.ylabel('Data')
 for i in range(1, len(waypoints)):
 	splines.append(calculateSpline(waypoints[i - 1], waypoints[i]))
 
+totalSplineLength = 0
+leftSplineLength = 0
+rightSplineLength = 0
+
 #plot splines
 for i in range(0, len(waypoints) - 1):
-	plotSpline(splines[i], waypoints[i], waypoints[i + 1])
-	plotParallelCurve(splines[i], waypoints[i], waypoints[i + 1], 1)
+	# plotSpline(splines[i], waypoints[i], waypoints[i + 1])
+	plotParallelCurve(splines[i], waypoints[i], waypoints[i + 1], ROBOT_WIDTH / 2.0)
+	plotParallelCurve(splines[i], waypoints[i], waypoints[i + 1], -ROBOT_WIDTH / 2.0)
 	# plotHeading(splines[i], waypoints[i], waypoints[i + 1])
 
+	#Calculate length of splines
+	totalSplineLength += calcLengthCurve(splines[i], waypoints[i].x, waypoints[i + 1].x)
+
+print "Length: ", totalSplineLength
 
 plt.show()
